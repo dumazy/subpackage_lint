@@ -1,0 +1,11 @@
+name: kerekewere
+description: A set of linting rules for clean code structure
+version: 0.0.1
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.0.2
+
+dependencies:
+  analyzer: ^5.12.0
+  custom_lint_builder: ^0.4.0
