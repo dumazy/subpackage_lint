@@ -1,3 +1,7 @@
+# Kerekewere
+
+[![pub package](https://img.shields.io/pub/v/kerekewere.svg)](https://pub.dev/packages/kerekewere)
+
 A custom lint package for Dart.
 
 ## Features
