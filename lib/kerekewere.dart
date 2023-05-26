@@ -66,8 +66,6 @@ class _UsePackageImportFix extends DartFix {
 
       final packageUri = _getPackageUriForAbsoluteImport(absoluteUri);
 
-      print('packageUri: $packageUri');
-
       final changeBuilder = reporter.createChangeBuilder(
         message: 'Change to package import',
         priority: 1,
