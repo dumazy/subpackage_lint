@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
