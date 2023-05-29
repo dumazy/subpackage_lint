@@ -1,8 +1,9 @@
+import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
+import 'package:analyzer/src/generated/source.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
-import '../fix/remove_import.dart';
 import '../path_util.dart';
 
 class AvoidPackageImportForSamePackageRule extends DartLintRule {
@@ -22,26 +23,54 @@ class AvoidPackageImportForSamePackageRule extends DartLintRule {
     CustomLintContext context,
   ) {
     context.registry.addImportDirective((node) {
-      final uri = node.uri.stringValue;
-      if (uri == null) return;
-      final element = node.element;
-      // Unresolved
-      if (element == null) return;
-
-      final importedId = element.importedLibrary?.identifier;
-      final fileId = element.library.identifier;
-
-      if (importedId == null) return; // Not focusing on dart: imports
-
-      final importedPackageUri = getPackageUriForAbsoluteImport(importedId);
-      final filePackageUri = getPackageUriForAbsoluteImport(fileId);
-
-      if (importedPackageUri == filePackageUri && importedPackageUri == uri) {
+      if (isPackageImportFromSamePackage(node)) {
         reporter.reportErrorForNode(_code, node);
       }
     });
   }
 
   @override
-  List<Fix> getFixes() => [RemoveImportFix()];
+  List<Fix> getFixes() => [_RemoveImportFix()];
+}
+
+bool isPackageImportFromSamePackage(ImportDirective node) {
+  final uri = node.uri.stringValue;
+  if (uri == null) return false;
+
+  final element = node.element;
+  if (element == null) return false; // Unresolved
+
+  final importedId = element.importedLibrary?.identifier;
+  final fileId = element.library.identifier;
+
+  if (importedId == null) return false; // Not focusing on dart: imports
+
+  final importedPackageUri = getPackageUriForAbsoluteImport(importedId);
+  final filePackageUri = getPackageUriForAbsoluteImport(fileId);
+
+  return importedPackageUri == filePackageUri && importedPackageUri == uri;
+}
+
+class _RemoveImportFix extends DartFix {
+  @override
+  void run(
+    CustomLintResolver resolver,
+    ChangeReporter reporter,
+    CustomLintContext context,
+    AnalysisError analysisError,
+    List<AnalysisError> others,
+  ) {
+    context.registry.addImportDirective((node) {
+      if (!isPackageImportFromSamePackage(node)) return;
+      final changeBuilder = reporter.createChangeBuilder(
+        message: 'Remove import',
+        priority:
+            100, // No specific reason, but if lower than 2 "ignore warning" was suggested first, instead of the fix
+      );
+
+      changeBuilder.addDartFileEdit((builder) {
+        builder.addDeletion(SourceRange(node.uri.offset, node.uri.length));
+      });
+    });
+  }
 }
