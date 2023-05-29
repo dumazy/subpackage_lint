@@ -26,3 +26,24 @@ analyzer:
     - custom_lint
 ```
 
+## Exclude files
+
+To exclude files from being linted, add the following to the `analysis_options.yaml` file:
+
+```yaml
+custom_lint:
+  rules:
+    - avoid_src_import_from_other_subpackage:
+      exclude:
+        - "*_test.dart"
+        - "*.g.dart"
+    - avoid_src_import_from_same_package:
+      exclude:
+        - "*_test.dart"
+    - avoid_package_import_for_same_package:
+      exclude:
+        - "*_test.dart"
+```
+
+Currently, you can only exclude files using glob patterns and not specify with absolute paths.
+For example: `lib/my/path/*.g.dart` will not work.

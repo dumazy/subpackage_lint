@@ -1,6 +1,6 @@
 name: kerekewere
 description: A set of linting rules for clean code structure
-version: 0.0.2
+version: 0.0.3
 repository: https://github.com/dumazy/kerekewere
 
 environment:
@@ -9,6 +9,7 @@ environment:
 dependencies:
   analyzer: ^5.12.0
   custom_lint_builder: ^0.4.0
+  glob: ^2.1.2
 
 dev_dependencies:
   test: ^1.24.0

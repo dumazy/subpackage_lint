@@ -4,10 +4,12 @@ import 'package:analyzer/error/listener.dart';
 import 'package:analyzer/src/generated/source.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
+import '../exclude/exclude.dart';
 import '../path_util.dart';
 
 class AvoidPackageImportForSamePackageRule extends DartLintRule {
-  AvoidPackageImportForSamePackageRule() : super(code: _code);
+  final CustomLintConfigs configs;
+  AvoidPackageImportForSamePackageRule(this.configs) : super(code: _code);
 
   static const _code = LintCode(
     name: 'avoid_package_import_for_same_package',
@@ -22,6 +24,7 @@ class AvoidPackageImportForSamePackageRule extends DartLintRule {
     ErrorReporter reporter,
     CustomLintContext context,
   ) {
+    if (shouldExclude(resolver.path, configs, _code.name)) return;
     context.registry.addImportDirective((node) {
       if (isPackageImportFromSamePackage(node)) {
         reporter.reportErrorForNode(_code, node);

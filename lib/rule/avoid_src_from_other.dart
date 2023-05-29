@@ -1,13 +1,17 @@
+import 'dart:io';
+
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
 import 'package:analyzer/src/generated/source.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
+import 'package:kerekewere/exclude/exclude.dart';
 
 import '../path_util.dart';
 
 class AvoidSrcImportFromOtherSubpackageRule extends DartLintRule {
-  AvoidSrcImportFromOtherSubpackageRule() : super(code: _code);
+  final CustomLintConfigs configs;
+  AvoidSrcImportFromOtherSubpackageRule(this.configs) : super(code: _code);
 
   static const _code = LintCode(
     name: 'avoid_src_import_from_other_subpackage',
@@ -22,6 +26,7 @@ class AvoidSrcImportFromOtherSubpackageRule extends DartLintRule {
     ErrorReporter reporter,
     CustomLintContext context,
   ) {
+    if (shouldExclude(resolver.path, configs, _code.name)) return;
     context.registry.addImportDirective((node) {
       if (isSrcImportFromOtherPackage(node)) {
         reporter.reportErrorForNode(_code, node);

@@ -9,8 +9,8 @@ PluginBase createPlugin() => _SubpackagePlugin();
 class _SubpackagePlugin extends PluginBase {
   @override
   List<LintRule> getLintRules(CustomLintConfigs configs) => [
-        AvoidSrcImportFromOtherSubpackageRule(),
-        AvoidSrcImportFromSamePackageRule(),
-        AvoidPackageImportForSamePackageRule(),
+        AvoidSrcImportFromOtherSubpackageRule(configs),
+        AvoidSrcImportFromSamePackageRule(configs),
+        AvoidPackageImportForSamePackageRule(configs),
       ];
 }
