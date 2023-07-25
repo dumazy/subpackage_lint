@@ -1,6 +1,6 @@
 name: subpackage_lint
 description: A set of linting rules for clean code structure with subpackages.
-version: 0.0.3
+version: 1.0.0
 repository: https://github.com/dumazy/subpackge_lint
 
 environment:
