@@ -3,8 +3,8 @@ import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
 import 'package:analyzer/src/generated/source.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
-import 'package:kerekewere/exclude/exclude.dart';
 
+import '../exclude/exclude.dart';
 import '../path_util.dart';
 
 class AvoidSrcImportFromOtherSubpackageRule extends DartLintRule {

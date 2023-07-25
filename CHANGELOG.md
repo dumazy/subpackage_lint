@@ -1,3 +1,8 @@
+## 1.0.0
+
+- Rename to `subpackage_lint` package. (Previously `kerekewere`)
+- Add philosophy section to README.
+
 ## 0.0.3
 
 - Fix issue where import changes were applied to first import in file only
@@ -12,4 +17,3 @@
 ## 0.0.1
 
 - Initial version.
-
