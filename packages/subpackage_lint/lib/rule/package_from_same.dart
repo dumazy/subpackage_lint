@@ -27,7 +27,7 @@ class AvoidPackageImportForSamePackageRule extends DartLintRule {
     if (shouldExclude(resolver.path, configs, _code.name)) return;
     context.registry.addImportDirective((node) {
       if (isPackageImportFromSamePackage(node)) {
-        reporter.reportErrorForNode(_code, node);
+        reporter.reportErrorForOffset(_code, node.uri.offset, node.uri.length);
       }
     });
   }
