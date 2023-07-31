@@ -1,0 +1,11 @@
+name: tests
+publish_to: none
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dev_dependencies:
+  test:
+  custom_lint: ^0.4.0
+  subpackage_lint:
+    path: ../subpackage_lint

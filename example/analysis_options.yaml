@@ -1,9 +1,0 @@
-analyzer:
-  plugins:
-    - custom_lint
-
-custom_lint:
-  rules:
-    - avoid_src_import_from_other_subpackage:
-      exclude:
-        - "*_test.dart"

@@ -1,5 +1,5 @@
 import 'package:test/test.dart';
-import 'package:example/feature/src/code.dart';
+import 'package:tests/feature/src/code.dart';
 
 void main() {
   test('example test', () {
