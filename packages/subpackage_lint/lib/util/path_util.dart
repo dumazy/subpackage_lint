@@ -6,6 +6,8 @@ String getPackageUriForAbsoluteImport(String uri) {
   return packageUri;
 }
 
+/// Returns the relative import URI from a file to an imported file.
+/// e.g. `lib/src/foo.dart` -> `lib/src/bar.dart` -> `../bar.dart`
 String getRelativeImportUri(String imported, String file) {
   final importedParts = imported.split('/');
   final fileParts = file.split('/');
@@ -28,6 +30,8 @@ String getRelativeImportUri(String imported, String file) {
   return packageUri;
 }
 
+/// Returns the relative path from a package URI.
+/// e.g. `package:foo/src/bar.dart` -> `lib/src/bar.dart`
 String getRelativePathFromPackageUri(Uri uri) {
   final packageUri = uri.toString();
   final parts = packageUri.split('/');
