@@ -117,13 +117,13 @@ custom_lint:
     - avoid_src_import_from_other_subpackage:
       exclude:
         - "lib/my/excluded/file.dart"
-        - "*_test.dart"
-        - "*.g.dart"
+        - "**_test.dart"
+        - "**.g.dart"
     - avoid_src_import_from_same_package:
       exclude:
         - "lib/my/excluded/directory/**"
-        - "*_test.dart"
+        - "**_test.dart"
     - avoid_package_import_for_same_package:
       exclude:
-        - "*_test.dart"
+        - "**_test.dart"
 ```
