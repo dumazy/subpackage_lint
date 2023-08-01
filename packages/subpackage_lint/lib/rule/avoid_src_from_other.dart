@@ -1,6 +1,7 @@
 import 'package:analyzer/dart/ast/ast.dart';
 import 'package:analyzer/error/error.dart';
 import 'package:analyzer/error/listener.dart';
+// ignore: implementation_imports
 import 'package:analyzer/src/generated/source.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
@@ -41,23 +42,29 @@ class AvoidSrcImportFromOtherSubpackageRule extends DartLintRule {
 
 bool isSrcImportFromOtherPackage(ImportDirective node) {
   final uri = node.uri.stringValue;
-  if (uri == null || uri.isEmpty) return false; // no URI
+
+  // no URI
+  if (uri == null || uri.isEmpty) return false;
 
   final element = node.element;
-  if (element == null) return false; // Unresolved
+
+  // Unresolved
+  if (element == null) return false;
 
   final importedId = element.importedLibrary?.identifier;
   final fileId = element.library.identifier;
 
-  if (importedId == null) return false; // Not focusing on dart: imports
+  // Not focusing on dart: imports
+  if (importedId == null) return false;
 
   final importedPackageUri = getPackageUriForAbsoluteImport(importedId);
   final filePackageUri = getPackageUriForAbsoluteImport(fileId);
 
-  if (importedPackageUri == filePackageUri) return false; // Same package
+  // Same package
+  if (importedPackageUri == filePackageUri) return false;
 
-  if (uri == importedPackageUri)
-    return false; // already a package import, so no src
+  // already a package import, so no src
+  if (uri == importedPackageUri) return false;
 
   return true;
 }

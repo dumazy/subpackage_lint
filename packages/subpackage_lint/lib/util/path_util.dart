@@ -2,7 +2,7 @@ String getPackageUriForAbsoluteImport(String uri) {
   if (!uri.contains('src')) return uri;
 
   final parts = uri.split('/').takeWhile((value) => value != 'src');
-  final packageUri = parts.join('/') + '/' + parts.last + '.dart';
+  final packageUri = '${parts.join('/')}/${parts.last}.dart';
   return packageUri;
 }
 
