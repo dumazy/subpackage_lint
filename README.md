@@ -127,6 +127,3 @@ custom_lint:
       exclude:
         - "*_test.dart"
 ```
-
-Currently, you can only exclude files using glob patterns and not specify with absolute paths.
-For example: `lib/my/path/*.g.dart` will not work.
