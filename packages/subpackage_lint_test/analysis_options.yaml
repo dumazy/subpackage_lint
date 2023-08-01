@@ -6,11 +6,13 @@ custom_lint:
   rules:
     - avoid_src_import_from_other_subpackage:
       exclude:
-        - "*_test.dart"
-        - "*.g.dart"
+        - "lib/excluded/**"
+        - "**_test.dart"
     - avoid_src_import_from_same_package:
       exclude:
-        - "*_test.dart"
+        - "lib/excluded/**"
+        - "**_test.dart"
     - avoid_package_import_for_same_package:
       exclude:
-        - "*_test.dart"
+        - "lib/excluded/**"
+        - "**_test.dart"

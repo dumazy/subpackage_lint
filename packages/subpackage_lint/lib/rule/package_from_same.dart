@@ -5,7 +5,8 @@ import 'package:analyzer/src/generated/source.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
 import '../exclude/exclude.dart';
-import '../path_util.dart';
+import '../util/path_util.dart';
+import '../util/resolver_extensions.dart';
 
 class AvoidPackageImportForSamePackageRule extends DartLintRule {
   final CustomLintConfigs configs;
@@ -23,8 +24,10 @@ class AvoidPackageImportForSamePackageRule extends DartLintRule {
     CustomLintResolver resolver,
     ErrorReporter reporter,
     CustomLintContext context,
-  ) {
-    if (shouldExclude(resolver.path, configs, _code.name)) return;
+  ) async {
+    final path = await resolver.relativePath;
+    if (shouldExclude(path, configs, _code.name)) return;
+
     context.registry.addImportDirective((node) {
       if (isPackageImportFromSamePackage(node)) {
         reporter.reportErrorForOffset(_code, node.uri.offset, node.uri.length);

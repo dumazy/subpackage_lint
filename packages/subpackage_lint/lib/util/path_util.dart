@@ -27,3 +27,15 @@ String getRelativeImportUri(String imported, String file) {
   final packageUri = relativeParts.join('/');
   return packageUri;
 }
+
+String getRelativePathFromPackageUri(Uri uri) {
+  final packageUri = uri.toString();
+  final parts = packageUri.split('/');
+
+  // TODO This is a quite naive implementation.
+  final relativePath = [
+    'lib',
+    ...parts.skip(1),
+  ].join('/');
+  return relativePath;
+}

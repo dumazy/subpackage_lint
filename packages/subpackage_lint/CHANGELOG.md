@@ -1,3 +1,7 @@
+## Next version
+
+- Add support for excluding directories from being linted.
+
 ## 1.0.0
 
 - Rename to `subpackage_lint` package. (Previously `kerekewere`)

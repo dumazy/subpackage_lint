@@ -1,6 +1,7 @@
 # subpackage_lint
 
 [![pub package](https://img.shields.io/pub/v/subpackage_lint.svg)](https://pub.dev/packages/subpackage_lint)
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K3NJK6V)
 
 A set of lint rules to enforce best practices for subpackages.
@@ -115,10 +116,12 @@ custom_lint:
   rules:
     - avoid_src_import_from_other_subpackage:
       exclude:
+        - "lib/my/excluded/file.dart"
         - "*_test.dart"
         - "*.g.dart"
     - avoid_src_import_from_same_package:
       exclude:
+        - "lib/my/excluded/directory/**"
         - "*_test.dart"
     - avoid_package_import_for_same_package:
       exclude:
