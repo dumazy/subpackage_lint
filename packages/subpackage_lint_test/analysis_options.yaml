@@ -3,16 +3,22 @@ analyzer:
     - custom_lint
 
 custom_lint:
+  debug: true
+  # Optional, will cause custom_lint to log its internal debug information
+  verbose: true
   rules:
     - avoid_src_import_from_other_subpackage:
+      directories:
+        - "lib"
       exclude:
-        - "lib/excluded/**"
-        - "**_test.dart"
+        - "lib/excluded/*.dart"
     - avoid_src_import_from_same_package:
+      directories:
+        - "lib"
       exclude:
         - "lib/excluded/**"
-        - "**_test.dart"
     - avoid_package_import_for_same_package:
+      directories:
+        - "lib"
       exclude:
         - "lib/excluded/**"
-        - "**_test.dart"

@@ -1,17 +1,16 @@
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/error/error.dart';
+import 'package:analyzer/error/error.dart' hide LintCode;
 import 'package:analyzer/error/listener.dart';
-// ignore: implementation_imports
-import 'package:analyzer/src/generated/source.dart';
+import 'package:analyzer/source/source_range.dart';
+
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
-import '../exclude/exclude.dart';
 import '../util/path_util.dart';
-import '../util/resolver_extensions.dart';
+import 'subpackage_rule.dart';
 
-class AvoidPackageImportForSamePackageRule extends DartLintRule {
-  final CustomLintConfigs configs;
-  AvoidPackageImportForSamePackageRule(this.configs) : super(code: _code);
+class AvoidPackageImportForSamePackageRule extends SubpackageRule {
+  AvoidPackageImportForSamePackageRule(CustomLintConfigs configs)
+      : super(configs, _code);
 
   static const _code = LintCode(
     name: 'avoid_package_import_for_same_package',
@@ -26,12 +25,15 @@ class AvoidPackageImportForSamePackageRule extends DartLintRule {
     ErrorReporter reporter,
     CustomLintContext context,
   ) async {
-    final path = await resolver.relativePath;
-    if (shouldExclude(path, configs, _code.name)) return;
+    if (await shouldExclude(resolver)) return;
 
     context.registry.addImportDirective((node) {
       if (isPackageImportFromSamePackage(node)) {
-        reporter.reportErrorForOffset(_code, node.uri.offset, node.uri.length);
+        reporter.atOffset(
+          offset: node.uri.offset,
+          length: node.uri.length,
+          errorCode: _code,
+        );
       }
     });
   }

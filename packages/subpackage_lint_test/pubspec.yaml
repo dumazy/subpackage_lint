@@ -6,6 +6,6 @@ environment:
 
 dev_dependencies:
   test:
-  custom_lint: ^0.5.0
+  custom_lint: ^0.6.7
   subpackage_lint:
     path: ../subpackage_lint

@@ -33,6 +33,7 @@ String getRelativeImportUri(String imported, String file) {
 /// Returns the relative path from a package URI.
 /// e.g. `package:foo/src/bar.dart` -> `lib/src/bar.dart`
 String getRelativePathFromPackageUri(Uri uri) {
+  print('uri: $uri');
   final packageUri = uri.toString();
   final parts = packageUri.split('/');
 

@@ -1,17 +1,18 @@
 import 'package:analyzer/dart/ast/ast.dart';
-import 'package:analyzer/error/error.dart';
+import 'package:analyzer/error/error.dart' hide LintCode;
 import 'package:analyzer/error/listener.dart';
-// ignore: implementation_imports
-import 'package:analyzer/src/generated/source.dart';
+import 'package:analyzer/source/source_range.dart';
+
 import 'package:custom_lint_builder/custom_lint_builder.dart';
+import 'package:subpackage_lint/rule/subpackage_rule.dart';
 
-import '../exclude/exclude.dart';
 import '../util/path_util.dart';
-import '../util/resolver_extensions.dart';
 
-class AvoidSrcImportFromOtherSubpackageRule extends DartLintRule {
-  final CustomLintConfigs configs;
-  AvoidSrcImportFromOtherSubpackageRule(this.configs) : super(code: _code);
+class AvoidSrcImportFromOtherSubpackageRule extends SubpackageRule {
+  AvoidSrcImportFromOtherSubpackageRule(CustomLintConfigs configs)
+      : super(configs, _code) {
+    print('options: ${options.excludeGlobs} ${options.directories}');
+  }
 
   static const _code = LintCode(
     name: 'avoid_src_import_from_other_subpackage',
@@ -26,12 +27,15 @@ class AvoidSrcImportFromOtherSubpackageRule extends DartLintRule {
     ErrorReporter reporter,
     CustomLintContext context,
   ) async {
-    final path = await resolver.relativePath;
-    if (shouldExclude(path, configs, _code.name)) return;
+    if (await shouldExclude(resolver)) return;
 
     context.registry.addImportDirective((node) {
       if (isSrcImportFromOtherPackage(node)) {
-        reporter.reportErrorForOffset(_code, node.uri.offset, node.uri.length);
+        reporter.atOffset(
+          offset: node.uri.offset,
+          length: node.uri.length,
+          errorCode: _code,
+        );
       }
     });
   }
