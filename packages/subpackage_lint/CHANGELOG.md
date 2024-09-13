@@ -2,6 +2,15 @@
 
 - Limit directories for the lint rule to run on.
 - Improve performance by parsing configuration at startup instead of on every run.
+- Upgrade analyzer to 6.6.0 and custom_lint to 0.6.5
+
+## 1.1.0+2
+
+- Improve README.
+
+## 1.1.0+1
+
+- Improve README.
 
 ## 1.1.0
 
