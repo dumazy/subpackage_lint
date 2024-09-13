@@ -1,3 +1,8 @@
+## 1.2.0
+
+- Limit directories for the lint rule to run on.
+- Improve performance by parsing configuration at startup instead of on every run.
+
 ## 1.1.0
 
 - Add support for excluding directories from being linted.
