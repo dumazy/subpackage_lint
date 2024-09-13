@@ -4,7 +4,6 @@ analyzer:
 
 custom_lint:
   debug: true
-  # Optional, will cause custom_lint to log its internal debug information
   verbose: true
   rules:
     - avoid_src_import_from_other_subpackage:

@@ -17,9 +17,7 @@ abstract class SubpackageRule extends DartLintRule {
   Future<bool> shouldExclude(CustomLintResolver resolver) async {
     final path = await resolver.relativePath;
     return options.excludeGlobs.any((glob) {
-      final result = glob.matches(path);
-      print('Checking ${path} against $glob: $result');
-      return result;
+      return glob.matches(path);
     });
   }
 

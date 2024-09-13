@@ -10,9 +10,7 @@ import '../util/path_util.dart';
 
 class AvoidSrcImportFromOtherSubpackageRule extends SubpackageRule {
   AvoidSrcImportFromOtherSubpackageRule(CustomLintConfigs configs)
-      : super(configs, _code) {
-    print('options: ${options.excludeGlobs} ${options.directories}');
-  }
+      : super(configs, _code);
 
   static const _code = LintCode(
     name: 'avoid_src_import_from_other_subpackage',

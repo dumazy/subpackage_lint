@@ -107,23 +107,35 @@ analyzer:
     - custom_lint
 ```
 
-## Exclude files
+## Limit directories and exclude files
 
-To exclude files from being linted, add the following to the `analysis_options.yaml` file:
+You can limit directories and exclude files from the lint rules by adding the following to your `analysis_options.yaml` file:
 
 ```yaml
 custom_lint:
   rules:
     - avoid_src_import_from_other_subpackage:
+      directories:
+        - "lib/my_subpackage" # only check imports within this directory
       exclude:
         - "lib/my/excluded/file.dart"
         - "**_test.dart"
         - "**.g.dart"
     - avoid_src_import_from_same_package:
+      directories:
+        - "lib"
       exclude:
         - "lib/my/excluded/directory/**"
         - "**_test.dart"
     - avoid_package_import_for_same_package:
+      directories:
+        - "lib"
       exclude:
         - "**_test.dart"
 ```
+
+## Known issues
+
+Currently there is an issue with the exclusion of files.
+While exclusion patterns like `**.g.dart` work, there are some issues with excluding relative paths outside the `lib` directory.
+If you run into this issue, please open an issue on GitHub.

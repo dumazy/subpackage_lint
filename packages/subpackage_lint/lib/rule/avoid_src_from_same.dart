@@ -6,7 +6,6 @@ import 'package:analyzer/source/source_range.dart';
 import 'package:custom_lint_builder/custom_lint_builder.dart';
 
 import '../util/path_util.dart';
-import '../util/resolver_extensions.dart';
 import 'subpackage_rule.dart';
 
 class AvoidSrcImportFromSamePackageRule extends SubpackageRule {
