@@ -1,3 +1,61 @@
+import 'package:analyzer/dart/ast/ast.dart';
+import 'package:analyzer_plugin/protocol/protocol_common.dart';
+import 'package:subpackage_lint/src/lint_rule.dart';
+
+import '../util/path_util.dart';
+
+final class AvoidSrcImportFromOtherSubpackageRule extends LintRule {
+  AvoidSrcImportFromOtherSubpackageRule({
+    required super.node,
+    required super.path,
+    required super.unit,
+  });
+
+  @override
+  String get message =>
+      'Avoid importing from `src` directory of other subpackage';
+
+  @override
+  AnalysisError? run() {
+    final node = this.node;
+    if (node is ImportDirective && isSrcImportFromOtherPackage(node)) {
+      return reportLintFor(node: node, path: path);
+    }
+    return null;
+  }
+
+  bool isSrcImportFromOtherPackage(ImportDirective node) {
+    print('Checking import: ${node.uri.stringValue}');
+
+    final uri = node.uri.stringValue;
+
+    // no URI
+    if (uri == null || uri.isEmpty) return false;
+
+    final element = node.element;
+
+    // Unresolved
+    if (element == null) return false;
+
+    final importedId = element.importedLibrary?.identifier;
+    final fileId = element.library.identifier;
+
+    // Not focusing on dart: imports
+    if (importedId == null) return false;
+
+    final importedPackageUri = getPackageUriForAbsoluteImport(importedId);
+    final filePackageUri = getPackageUriForAbsoluteImport(fileId);
+
+    // Same package
+    if (importedPackageUri == filePackageUri) return false;
+
+    // already a package import, so no src
+    if (uri == importedPackageUri) return false;
+
+    return true;
+  }
+}
+
 // import 'package:analyzer/dart/ast/ast.dart';
 // import 'package:analyzer/error/error.dart' hide LintCode;
 // import 'package:analyzer/error/listener.dart';
@@ -42,34 +100,34 @@
 //   List<Fix> getFixes() => [_UsePackageImportFix()];
 // }
 
-// bool isSrcImportFromOtherPackage(ImportDirective node) {
-//   final uri = node.uri.stringValue;
+bool isSrcImportFromOtherPackage(ImportDirective node) {
+  final uri = node.uri.stringValue;
 
-//   // no URI
-//   if (uri == null || uri.isEmpty) return false;
+  // no URI
+  if (uri == null || uri.isEmpty) return false;
 
-//   final element = node.element;
+  final element = node.element;
 
-//   // Unresolved
-//   if (element == null) return false;
+  // Unresolved
+  if (element == null) return false;
 
-//   final importedId = element.importedLibrary?.identifier;
-//   final fileId = element.library.identifier;
+  final importedId = element.importedLibrary?.identifier;
+  final fileId = element.library.identifier;
 
-//   // Not focusing on dart: imports
-//   if (importedId == null) return false;
+  // Not focusing on dart: imports
+  if (importedId == null) return false;
 
-//   final importedPackageUri = getPackageUriForAbsoluteImport(importedId);
-//   final filePackageUri = getPackageUriForAbsoluteImport(fileId);
+  final importedPackageUri = getPackageUriForAbsoluteImport(importedId);
+  final filePackageUri = getPackageUriForAbsoluteImport(fileId);
 
-//   // Same package
-//   if (importedPackageUri == filePackageUri) return false;
+  // Same package
+  if (importedPackageUri == filePackageUri) return false;
 
-//   // already a package import, so no src
-//   if (uri == importedPackageUri) return false;
+  // already a package import, so no src
+  if (uri == importedPackageUri) return false;
 
-//   return true;
-// }
+  return true;
+}
 
 // class _UsePackageImportFix extends DartFix {
 //   @override

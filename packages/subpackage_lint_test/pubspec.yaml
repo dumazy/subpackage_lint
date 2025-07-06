@@ -1,11 +1,16 @@
-name: tests
-publish_to: none
+name: subpackage_lint_test
+description: tests for subpackage_lint package.
+publish_to: "none"
+version: 2.0.0
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
+  sdk: ">=3.6.0 <4.0.0"
 
-dev_dependencies:
-  test:
-  custom_lint: ^0.6.7
+dependencies:
   subpackage_lint:
     path: ../subpackage_lint
+    
+dev_dependencies:
+  test:
+  
+

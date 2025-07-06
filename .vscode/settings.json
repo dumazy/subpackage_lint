@@ -1,0 +1,7 @@
+{
+    // "dart.analyzerVmAdditionalArgs": [
+    //     "--observe=8888", // You can use any free port
+    //     "--pause-isolates-on-start"
+    // ],
+    "dart.analyzerInstrumentationLogFile": "logs/analyzer.txt"
+}

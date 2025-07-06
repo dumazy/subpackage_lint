@@ -1,16 +1,18 @@
-import 'package:custom_lint_builder/custom_lint_builder.dart';
+export 'src/plugin/starter.dart';
 
-import 'rule/avoid_src_from_other.dart';
-import 'rule/avoid_src_from_same.dart';
-import 'rule/package_from_same.dart';
+// import 'package:custom_lint_builder/custom_lint_builder.dart';
 
-PluginBase createPlugin() => _SubpackagePlugin();
+// import 'rule/avoid_src_from_other.dart';
+// import 'rule/avoid_src_from_same.dart';
+// import 'rule/package_from_same.dart';
 
-class _SubpackagePlugin extends PluginBase {
-  @override
-  List<LintRule> getLintRules(CustomLintConfigs configs) => [
-        AvoidSrcImportFromOtherSubpackageRule(configs),
-        AvoidSrcImportFromSamePackageRule(configs),
-        AvoidPackageImportForSamePackageRule(configs),
-      ];
-}
+// PluginBase createPlugin() => _SubpackagePlugin();
+
+// class _SubpackagePlugin extends PluginBase {
+//   @override
+//   List<LintRule> getLintRules(CustomLintConfigs configs) => [
+//         AvoidSrcImportFromOtherSubpackageRule(configs),
+//         AvoidSrcImportFromSamePackageRule(configs),
+//         AvoidPackageImportForSamePackageRule(configs),
+//       ];
+// }
