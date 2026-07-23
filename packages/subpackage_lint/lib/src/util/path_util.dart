@@ -69,12 +69,26 @@ bool isSubpackageBarrel(String absolutePath) {
   return absolutePath == _barrelPathFor(parentDir);
 }
 
+/// Cache of directory path -> whether it is a subpackage directory.
+///
+/// Subpackage structure is stable within an analysis session, so this avoids
+/// re-running filesystem stats while walking parent directories for every
+/// import (the same directories are checked over and over). The cache lives for
+/// the life of the plugin isolate; adding or removing a `src/` folder or barrel
+/// therefore takes effect after the analysis server is restarted. Call
+/// [resetSubpackageDetectionCache] to clear it (used by tests).
+final Map<String, bool> _isSubpackageDirCache = {};
+
+/// Clears the [_isSubpackageDir] cache. Intended for tests.
+void resetSubpackageDetectionCache() => _isSubpackageDirCache.clear();
+
 /// Whether [dir] qualifies as a subpackage directory: it contains both a `src`
 /// directory and a barrel file named after the directory.
-bool _isSubpackageDir(String dir) {
-  final hasSrcFolder = Directory(p.join(dir, 'src')).existsSync();
-  if (!hasSrcFolder) return false;
-  return File(_barrelPathFor(dir)).existsSync();
-}
+bool _isSubpackageDir(String dir) =>
+    _isSubpackageDirCache.putIfAbsent(dir, () {
+      final hasSrcFolder = Directory(p.join(dir, 'src')).existsSync();
+      if (!hasSrcFolder) return false;
+      return File(_barrelPathFor(dir)).existsSync();
+    });
 
 String _barrelPathFor(String dir) => p.join(dir, '${p.basename(dir)}.dart');

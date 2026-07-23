@@ -29,12 +29,36 @@ typedef ImportAnalysis = ({
   SubpackageInfo? targetSubpackage,
 });
 
+/// Per-node cache of classification results.
+///
+/// All six rules register a visitor over import directives, so each import is
+/// classified once per rule against the *same* AST node instances. Keying the
+/// result by node identity lets the first rule's computation be reused by the
+/// other five. An [Expando] is weak-keyed, so entries are collected together
+/// with the AST and nothing leaks across analyses.
+final Expando<_CachedAnalysis> _analysisCache = Expando('subpackageImport');
+
+class _CachedAnalysis {
+  const _CachedAnalysis(this.analysis);
+
+  final ImportAnalysis? analysis;
+}
+
 /// Classifies [node] against the subpackage import rules.
 ///
 /// [sourceFilePath] is the absolute path of the file containing the import.
 /// Returns `null` when the import is fine, unresolvable, or not relevant (e.g.
-/// `dart:` imports).
+/// `dart:` imports). The result is memoized per node (see [_analysisCache]).
 ImportAnalysis? classifyImport(ImportDirective node, String sourceFilePath) {
+  final cached = _analysisCache[node];
+  if (cached != null) return cached.analysis;
+
+  final analysis = _classifyImport(node, sourceFilePath);
+  _analysisCache[node] = _CachedAnalysis(analysis);
+  return analysis;
+}
+
+ImportAnalysis? _classifyImport(ImportDirective node, String sourceFilePath) {
   final importUri = node.uri.stringValue;
   if (importUri == null || importUri.isEmpty) return null;
 

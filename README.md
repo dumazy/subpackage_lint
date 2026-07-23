@@ -4,7 +4,20 @@
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/K3K3NJK6V)
 
-A set of lint rules to enforce best practices for subpackages.
+**Structure `lib/` into subpackages — each a public barrel file over a private
+`src/` folder — and let the linter keep every import honest about that shape.**
+
+subpackage_lint is one convention plus the rules that enforce it:
+
+- **A subpackage** is a directory with a barrel library that exports its public
+  API (`my_subpackage/my_subpackage.dart`) and a `src/` folder holding
+  everything else.
+- **`src/` is private.** Other subpackages reach it only through the barrel.
+- **Imports follow the boundary:** relative *within* a subpackage, `package:`
+  (through the barrel) *across* subpackages.
+
+That's the whole idea. Each of the six [rules](#rules) is just a specific way to
+break it — caught in your IDE and on `dart analyze`, most with a quick fix.
 
 ## Philosophy
 

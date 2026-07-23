@@ -119,4 +119,38 @@ void main() {
       expect(isSubpackageBarrel(fixture('lib/top_level.dart')), isFalse);
     });
   });
+
+  group('subpackage detection cache', () {
+    late Directory dir;
+    late String barrel;
+
+    setUp(() {
+      dir = Directory.systemTemp.createTempSync('subpackage_lint_cache');
+      // A `feature` dir with a barrel file but (initially) no `src` folder, so
+      // it is not yet a subpackage.
+      final feature = Directory(p.join(dir.path, 'lib', 'feature'))
+        ..createSync(recursive: true);
+      barrel = p.join(feature.path, 'feature.dart');
+      File(barrel).writeAsStringSync('');
+      resetSubpackageDetectionCache();
+    });
+
+    tearDown(() {
+      dir.deleteSync(recursive: true);
+      resetSubpackageDetectionCache();
+    });
+
+    test('caches the result until explicitly reset', () {
+      expect(isSubpackageBarrel(barrel), isFalse);
+
+      // Turn it into a real subpackage on disk; the cached negative result is
+      // intentionally kept (stable within an analysis session).
+      Directory(p.join(dir.path, 'lib', 'feature', 'src')).createSync();
+      expect(isSubpackageBarrel(barrel), isFalse, reason: 'cached');
+
+      // A reset (isolate restart, in production) picks up the change.
+      resetSubpackageDetectionCache();
+      expect(isSubpackageBarrel(barrel), isTrue);
+    });
+  });
 }
