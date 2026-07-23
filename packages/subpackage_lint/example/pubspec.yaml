@@ -2,10 +2,10 @@ name: example
 publish_to: none
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: ">=3.10.0 <4.0.0"
 
 dev_dependencies:
   test:
   subpackage_lint:
-    path: /Users/fre/Developer/Open Source/subpackage_lint/packages/subpackage_lint
+    path: ../
 

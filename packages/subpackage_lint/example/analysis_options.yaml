@@ -1,3 +1,10 @@
-analyzer:
-  plugins:
-    - subpackage_lint
+plugins:
+  subpackage_lint:
+    path: ../
+    diagnostics:
+      avoid_own_subpackage_import: true
+      avoid_relative_subpackage_import: true
+      prefer_relative_import_from_same_subpackage: true
+      avoid_src_import_from_same_subpackage: true
+      avoid_relative_import_from_other_subpackage: true
+      avoid_src_import_from_other_subpackage: true

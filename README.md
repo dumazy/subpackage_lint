@@ -91,51 +91,102 @@ This way of organizing your imports is not enforced by the framework and is a gu
 
 ## Getting started
 
-Add the following to your `pubspec.yaml` file:
+> **Requires Dart 3.10 or later.** As of version 2.0.0 `subpackage_lint` is a
+> native analyzer plugin built on the
+> [new analyzer plugin system](https://dart.dev/tools/analyzer-plugins). It no
+> longer depends on `custom_lint`.
+>
+> The `analyzer` dependency is intentionally kept to a wide range so the plugin
+> can share a project with codegen tools such as `build_runner`, `freezed`, and
+> `json_serializable` that may pin an older `analyzer`. `pub` will pick the
+> newest compatible analyzer for your project.
+
+Add `subpackage_lint` to your dev dependencies:
 
 ```yaml
 dev_dependencies:
-  custom_lint:
-  subpackage_lint:
+  subpackage_lint: ^2.0.0
 ```
 
-Add the following to the `analysis_options.yaml` file:
+Then enable the plugin and the rules you want in your `analysis_options.yaml`:
+
+```yaml
+plugins:
+  subpackage_lint:
+    diagnostics:
+      avoid_own_subpackage_import: true
+      avoid_relative_subpackage_import: true
+      prefer_relative_import_from_same_subpackage: true
+      avoid_src_import_from_same_subpackage: true
+      avoid_relative_import_from_other_subpackage: true
+      avoid_src_import_from_other_subpackage: true
+```
+
+The rules run in your IDE and on the command line via `dart analyze` and
+`flutter analyze`. Most violations come with a quick fix.
+
+## Rules
+
+| Rule | Reports when… |
+| --- | --- |
+| `avoid_own_subpackage_import` | A file imports its own subpackage's barrel file instead of using relative imports. |
+| `avoid_relative_subpackage_import` | A subpackage's barrel file is imported with a relative import instead of a `package:` import. |
+| `prefer_relative_import_from_same_subpackage` | A file uses a `package:` import for another file in the same subpackage. |
+| `avoid_src_import_from_same_subpackage` | A relative import within a subpackage reaches through its `src` directory. |
+| `avoid_relative_import_from_other_subpackage` | A file in another subpackage is imported with a relative import. |
+| `avoid_src_import_from_other_subpackage` | A file from another subpackage's `src` directory is imported directly instead of its barrel file. |
+
+## Configuring rules
+
+Each rule is configured individually under the `diagnostics:` key. You can
+disable a rule or change its severity:
+
+```yaml
+plugins:
+  subpackage_lint:
+    diagnostics:
+      avoid_src_import_from_other_subpackage: warning # info | warning | error
+      prefer_relative_import_from_same_subpackage: false # disabled
+```
+
+## Excluding files
+
+To exclude files from **only** the subpackage rules — while every other lint
+still applies — add an `exclude:` list of [globs][glob] under a top-level
+`subpackage_lint:` section. This is useful for tests, which often need to import
+a subpackage's `src` directly:
+
+```yaml
+plugins:
+  subpackage_lint:
+    diagnostics:
+      avoid_src_import_from_other_subpackage: true
+
+subpackage_lint:
+  exclude:
+    - test/**
+    - "**/*.g.dart"
+```
+
+Globs are matched against each file's path relative to the package root. The
+section is read from your `analysis_options.yaml`, following relative
+`include:` directives — so in a monorepo you can put it in a shared options file
+that each package includes.
+
+To instead exclude files from **all** analysis (this plugin's rules *and* every
+other lint), use the standard analyzer `exclude:` option:
 
 ```yaml
 analyzer:
-  plugins:
-    - custom_lint
+  exclude:
+    - "**.g.dart"
+    - "lib/my/excluded/directory/**"
 ```
 
-## Limit directories and exclude files
+> **Note:** The analyzer only reads a plugin's `diagnostics:` configuration from
+> the root of an analysis context, so a nested `analysis_options.yaml`,
+> `analyzer: errors:` overrides, and `// ignore` comments do not turn these
+> rules off. The `subpackage_lint: exclude:` option above is the supported way
+> to scope them.
 
-You can limit directories and exclude files from the lint rules by adding the following to your `analysis_options.yaml` file:
-
-```yaml
-custom_lint:
-  rules:
-    - avoid_src_import_from_other_subpackage:
-      directories:
-        - "lib/my_subpackage" # only check imports within this directory
-      exclude:
-        - "lib/my/excluded/file.dart"
-        - "**_test.dart"
-        - "**.g.dart"
-    - avoid_src_import_from_same_package:
-      directories:
-        - "lib"
-      exclude:
-        - "lib/my/excluded/directory/**"
-        - "**_test.dart"
-    - avoid_package_import_for_same_package:
-      directories:
-        - "lib"
-      exclude:
-        - "**_test.dart"
-```
-
-## Known issues
-
-Currently there is an issue with the exclusion of files.
-While exclusion patterns like `**.g.dart` work, there are some issues with excluding relative paths outside the `lib` directory.
-If you run into this issue, please open an issue on GitHub.
+[glob]: https://pub.dev/packages/glob#syntax

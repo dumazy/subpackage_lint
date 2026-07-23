@@ -4,15 +4,21 @@ version: 2.0.0
 repository: https://github.com/dumazy/subpackage_lint
 
 environment:
-  sdk: ">=3.5.0 <4.0.0"
+  sdk: ">=3.10.0 <4.0.0"
 
 dependencies:
-  analyzer: ^7.5.4
-  analyzer_plugin: ^0.13.4
-  glob: ^2.1.3
+  # Wide ranges so the plugin can coexist with other analyzer-based dev tools
+  # (e.g. build_runner, freezed, json_serializable) that may pin an older
+  # analyzer. Each analysis_server_plugin release pins one exact analyzer
+  # version, so pub picks the newest pair that fits the whole project.
+  analysis_server_plugin: ">=0.3.5 <0.4.0"
+  analyzer: ">=10.0.0 <15.0.0"
+  analyzer_plugin: ">=0.13.0 <0.16.0"
+  glob: ^2.1.0
   path: ^1.9.0
-  yaml: ^3.1.2
+  yaml: ^3.1.0
 
 dev_dependencies:
   lints: ^6.0.0
+  test: ^1.25.0
 
