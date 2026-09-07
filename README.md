@@ -43,13 +43,12 @@ This library file should have the same name as your directory, so you'll end up 
 
 Considering the example above, this could be the content of the library file:
 
-```
+```dart
 // my_subpackage/my_subpackage.dart
 
-
-/// Here's a description of what this subpackage does
+/// Here's a description of what this subpackage does.
 /// This comment will be visible in your IDE when hovering over the import of this library file.
-library my_subpackage;
+library;
 
 export 'src/some_public_file.dart'; // only export the public files or classes
 ```
@@ -106,26 +105,15 @@ This way of organizing your imports is not enforced by the framework and is a gu
 
 > **Requires Dart 3.10 or later.** As of version 2.0.0 `subpackage_lint` is a
 > native analyzer plugin built on the
-> [new analyzer plugin system](https://dart.dev/tools/analyzer-plugins). It no
+> [analyzer plugin system](https://dart.dev/tools/analyzer-plugins). It no
 > longer depends on `custom_lint`.
->
-> The `analyzer` dependency is intentionally kept to a wide range so the plugin
-> can share a project with codegen tools such as `build_runner`, `freezed`, and
-> `json_serializable` that may pin an older `analyzer`. `pub` will pick the
-> newest compatible analyzer for your project.
 
-Add `subpackage_lint` to your dev dependencies:
-
-```yaml
-dev_dependencies:
-  subpackage_lint: ^2.0.0
-```
-
-Then enable the plugin and the rules you want in your `analysis_options.yaml`:
+Enable the plugin and the rules you want in your `analysis_options.yaml`:
 
 ```yaml
 plugins:
   subpackage_lint:
+    version: ^2.0.0
     diagnostics:
       avoid_own_subpackage_import: true
       avoid_relative_subpackage_import: true
@@ -135,8 +123,29 @@ plugins:
       avoid_src_import_from_other_subpackage: true
 ```
 
-The rules run in your IDE and on the command line via `dart analyze` and
-`flutter analyze`. Most violations come with a quick fix.
+That is the only change you need. **Do not add `subpackage_lint` to your
+`pubspec.yaml`.** The analysis server fetches and compiles the plugin in its
+own isolated package, so it never competes with your project's dependencies
+(`build_runner`, `freezed`, `json_serializable`, ...) and there is no
+`analyzer` version to reconcile.
+
+A few things to know:
+
+- The `version:` line is required. Without it (or a `path:`) the analyzer
+  silently skips the plugin and the rules never run.
+- `plugins:` is only read from the `analysis_options.yaml` at the root of your
+  package (or of your pub workspace, if you use one). The analyzer reports
+  `plugins_in_inner_options` if you put it anywhere else.
+- Every rule is off by default; list the ones you want under `diagnostics:`.
+
+The rules run in your IDE and on the command line via `dart analyze`. Most
+violations come with a quick fix in the IDE.
+
+> **Flutter projects:** the plugin works with the Dart SDK bundled with Flutter,
+> but prefer `dart analyze` over `flutter analyze` on the command line and in
+> CI. `flutter analyze` exits as soon as the analysis server reports its own
+> analysis complete, which is a few seconds before plugin diagnostics arrive, so
+> it silently misses them. `dart analyze` waits for plugins.
 
 ## Rules
 
@@ -157,9 +166,28 @@ disable a rule or change its severity:
 ```yaml
 plugins:
   subpackage_lint:
+    version: ^2.0.0
     diagnostics:
-      avoid_src_import_from_other_subpackage: warning # info | warning | error
+      avoid_src_import_from_other_subpackage: error # info | warning | error
+      avoid_relative_import_from_other_subpackage: true # default severity (warning)
       prefer_relative_import_from_same_subpackage: false # disabled
+```
+
+`analyzer: errors:` overrides do **not** apply to plugin diagnostics, so this
+block is the place to change a rule's severity.
+
+## Suppressing a diagnostic
+
+Plugin diagnostics are suppressed with the usual ignore comments, prefixed with
+the plugin name:
+
+```dart
+// ignore: subpackage_lint/avoid_src_import_from_other_subpackage
+import 'package:my_app/my_subpackage/src/some_public_file.dart';
+```
+
+```dart
+// ignore_for_file: subpackage_lint/avoid_src_import_from_other_subpackage
 ```
 
 ## Excluding files
@@ -172,6 +200,7 @@ a subpackage's `src` directly:
 ```yaml
 plugins:
   subpackage_lint:
+    version: ^2.0.0
     diagnostics:
       avoid_src_import_from_other_subpackage: true
 
@@ -196,10 +225,11 @@ analyzer:
     - "lib/my/excluded/directory/**"
 ```
 
-> **Note:** The analyzer only reads a plugin's `diagnostics:` configuration from
-> the root of an analysis context, so a nested `analysis_options.yaml`,
-> `analyzer: errors:` overrides, and `// ignore` comments do not turn these
-> rules off. The `subpackage_lint: exclude:` option above is the supported way
-> to scope them.
+> **Note:** The analyzer only reads `plugins:` from the root
+> `analysis_options.yaml`, so a nested options file cannot enable, disable, or
+> re-severity these rules, and `analyzer: errors:` does not apply to them. Use
+> `diagnostics:` for severity, an
+> [ignore comment](#suppressing-a-diagnostic) for a single import, and
+> `subpackage_lint: exclude:` for whole files.
 
 [glob]: https://pub.dev/packages/glob#syntax

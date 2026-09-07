@@ -26,7 +26,7 @@ class ExcludeConfig {
 
   /// Builds a config from raw glob [patterns] (matched with POSIX semantics).
   ExcludeConfig.fromPatterns(Iterable<String> patterns)
-      : this([for (final pattern in patterns) Glob(pattern, context: p.posix)]);
+    : this([for (final pattern in patterns) Glob(pattern, context: p.posix)]);
 
   final List<Glob> _globs;
 
@@ -45,8 +45,9 @@ class ExcludeConfig {
     final cached = _cache[packageRootPath];
     if (cached != null && cached.stamp == stamp) return cached.config;
 
-    final config =
-        ExcludeConfig.fromPatterns(_readPatterns(optionsPath, <String>{}));
+    final config = ExcludeConfig.fromPatterns(
+      _readPatterns(optionsPath, <String>{}),
+    );
     _cache[packageRootPath] = _CacheEntry(stamp, config);
     return config;
   }
@@ -58,8 +59,9 @@ class ExcludeConfig {
   /// relative to [packageRootPath] (using POSIX separators).
   bool excludes(String absolutePath, String packageRootPath) {
     if (_globs.isEmpty) return false;
-    final relative = p.posix
-        .joinAll(p.split(p.relative(absolutePath, from: packageRootPath)));
+    final relative = p.posix.joinAll(
+      p.split(p.relative(absolutePath, from: packageRootPath)),
+    );
     return _globs.any((glob) => glob.matches(relative));
   }
 
@@ -116,7 +118,10 @@ class ExcludeConfig {
   static List<String> _includes(Object? include) {
     if (include is String) return [include];
     if (include is YamlList) {
-      return [for (final entry in include) if (entry is String) entry];
+      return [
+        for (final entry in include)
+          if (entry is String) entry,
+      ];
     }
     return const [];
   }

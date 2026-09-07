@@ -18,8 +18,9 @@ void main() {
     });
 
     test('returns the subpackage for a deeply nested src file', () {
-      final info =
-          getSubpackageInfo(fixture('lib/feature/src/deep/nested.dart'));
+      final info = getSubpackageInfo(
+        fixture('lib/feature/src/deep/nested.dart'),
+      );
       expect(info?.name, 'feature');
     });
 
@@ -46,7 +47,10 @@ void main() {
     final feature = getSubpackageInfo(fixture('lib/feature/src/code.dart'))!;
 
     test('is true for a file directly in src', () {
-      expect(isWithinSrc(feature, fixture('lib/feature/src/code.dart')), isTrue);
+      expect(
+        isWithinSrc(feature, fixture('lib/feature/src/code.dart')),
+        isTrue,
+      );
     });
 
     test('is true for a deeply nested src file', () {
@@ -57,7 +61,10 @@ void main() {
     });
 
     test('is false for the barrel file (above src)', () {
-      expect(isWithinSrc(feature, fixture('lib/feature/feature.dart')), isFalse);
+      expect(
+        isWithinSrc(feature, fixture('lib/feature/feature.dart')),
+        isFalse,
+      );
     });
 
     test('is false for a public file next to the barrel (above src)', () {
@@ -117,6 +124,60 @@ void main() {
 
     test('is false for a top-level lib file', () {
       expect(isSubpackageBarrel(fixture('lib/top_level.dart')), isFalse);
+    });
+  });
+
+  group('barrelPackageUri', () {
+    test('maps a src file to its subpackage barrel', () {
+      expect(
+        barrelPackageUri(
+          targetLibraryUri: Uri.parse('package:fixtures/feature/src/code.dart'),
+          targetPath: fixture('lib/feature/src/code.dart'),
+        ),
+        Uri.parse('package:fixtures/feature/feature.dart'),
+      );
+    });
+
+    test('maps a deeply nested src file to its subpackage barrel', () {
+      expect(
+        barrelPackageUri(
+          targetLibraryUri: Uri.parse(
+            'package:fixtures/feature/src/deep/nested.dart',
+          ),
+          targetPath: fixture('lib/feature/src/deep/nested.dart'),
+        ),
+        Uri.parse('package:fixtures/feature/feature.dart'),
+      );
+    });
+
+    test('maps the barrel to itself', () {
+      expect(
+        barrelPackageUri(
+          targetLibraryUri: Uri.parse('package:fixtures/feature/feature.dart'),
+          targetPath: fixture('lib/feature/feature.dart'),
+        ),
+        Uri.parse('package:fixtures/feature/feature.dart'),
+      );
+    });
+
+    test('is null for a file outside any subpackage', () {
+      expect(
+        barrelPackageUri(
+          targetLibraryUri: Uri.parse('package:fixtures/plain_dir/plain.dart'),
+          targetPath: fixture('lib/plain_dir/plain.dart'),
+        ),
+        isNull,
+      );
+    });
+
+    test('is null for a non-package URI (e.g. a test file)', () {
+      expect(
+        barrelPackageUri(
+          targetLibraryUri: Uri.file(fixture('lib/feature/src/code.dart')),
+          targetPath: fixture('lib/feature/src/code.dart'),
+        ),
+        isNull,
+      );
     });
   });
 

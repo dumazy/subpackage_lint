@@ -11,13 +11,13 @@ import 'import_classifier.dart';
 
 /// All lint rules defined by this plugin, in registration order.
 List<AnalysisRule> get allRules => [
-      AvoidOwnSubpackageImport(),
-      AvoidRelativeSubpackageImport(),
-      PreferRelativeImportFromSameSubpackage(),
-      AvoidSrcImportFromSameSubpackage(),
-      AvoidRelativeImportFromOtherSubpackage(),
-      AvoidSrcImportFromOtherSubpackage(),
-    ];
+  AvoidOwnSubpackageImport(),
+  AvoidRelativeSubpackageImport(),
+  PreferRelativeImportFromSameSubpackage(),
+  AvoidSrcImportFromSameSubpackage(),
+  AvoidRelativeImportFromOtherSubpackage(),
+  AvoidSrcImportFromOtherSubpackage(),
+];
 
 /// Base class for the subpackage rules.
 ///
@@ -62,8 +62,9 @@ class _ImportVisitor extends SimpleAstVisitor<void> {
     // Skip files the consumer excluded from the subpackage rules.
     final packageRoot = this.packageRoot;
     if (packageRoot != null &&
-        ExcludeConfig.forPackage(packageRoot)
-            .excludes(sourceFilePath, packageRoot)) {
+        ExcludeConfig.forPackage(
+          packageRoot,
+        ).excludes(sourceFilePath, packageRoot)) {
       return;
     }
 
@@ -76,11 +77,11 @@ class _ImportVisitor extends SimpleAstVisitor<void> {
 
 class AvoidOwnSubpackageImport extends SubpackageRule {
   AvoidOwnSubpackageImport()
-      : super(
-          name: 'avoid_own_subpackage_import',
-          description:
-              "Avoid importing the subpackage's own barrel file from within it.",
-        );
+    : super(
+        name: 'avoid_own_subpackage_import',
+        description:
+            "Avoid importing the subpackage's own barrel file from within it.",
+      );
 
   @override
   DiagnosticCode get diagnosticCode => codes.avoidOwnSubpackageImport;
@@ -91,10 +92,10 @@ class AvoidOwnSubpackageImport extends SubpackageRule {
 
 class AvoidRelativeSubpackageImport extends SubpackageRule {
   AvoidRelativeSubpackageImport()
-      : super(
-          name: 'avoid_relative_subpackage_import',
-          description: "Use 'package:' imports when importing a subpackage.",
-        );
+    : super(
+        name: 'avoid_relative_subpackage_import',
+        description: "Use 'package:' imports when importing a subpackage.",
+      );
 
   @override
   DiagnosticCode get diagnosticCode => codes.avoidRelativeSubpackageImport;
@@ -106,11 +107,11 @@ class AvoidRelativeSubpackageImport extends SubpackageRule {
 
 class PreferRelativeImportFromSameSubpackage extends SubpackageRule {
   PreferRelativeImportFromSameSubpackage()
-      : super(
-          name: 'prefer_relative_import_from_same_subpackage',
-          description:
-              'Prefer relative imports for files in the same subpackage.',
-        );
+    : super(
+        name: 'prefer_relative_import_from_same_subpackage',
+        description:
+            'Prefer relative imports for files in the same subpackage.',
+      );
 
   @override
   DiagnosticCode get diagnosticCode =>
@@ -123,11 +124,11 @@ class PreferRelativeImportFromSameSubpackage extends SubpackageRule {
 
 class AvoidSrcImportFromSameSubpackage extends SubpackageRule {
   AvoidSrcImportFromSameSubpackage()
-      : super(
-          name: 'avoid_src_import_from_same_subpackage',
-          description:
-              "Avoid using '/src/' in relative imports within a subpackage.",
-        );
+    : super(
+        name: 'avoid_src_import_from_same_subpackage',
+        description:
+            "Avoid using '/src/' in relative imports within a subpackage.",
+      );
 
   @override
   DiagnosticCode get diagnosticCode => codes.avoidSrcImportFromSameSubpackage;
@@ -139,10 +140,10 @@ class AvoidSrcImportFromSameSubpackage extends SubpackageRule {
 
 class AvoidRelativeImportFromOtherSubpackage extends SubpackageRule {
   AvoidRelativeImportFromOtherSubpackage()
-      : super(
-          name: 'avoid_relative_import_from_other_subpackage',
-          description: "Use 'package:' imports for files in other subpackages.",
-        );
+    : super(
+        name: 'avoid_relative_import_from_other_subpackage',
+        description: "Use 'package:' imports for files in other subpackages.",
+      );
 
   @override
   DiagnosticCode get diagnosticCode =>
@@ -155,11 +156,11 @@ class AvoidRelativeImportFromOtherSubpackage extends SubpackageRule {
 
 class AvoidSrcImportFromOtherSubpackage extends SubpackageRule {
   AvoidSrcImportFromOtherSubpackage()
-      : super(
-          name: 'avoid_src_import_from_other_subpackage',
-          description:
-              "Avoid importing from the 'src' directory of another subpackage.",
-        );
+    : super(
+        name: 'avoid_src_import_from_other_subpackage',
+        description:
+            "Avoid importing from the 'src' directory of another subpackage.",
+      );
 
   @override
   DiagnosticCode get diagnosticCode => codes.avoidSrcImportFromOtherSubpackage;

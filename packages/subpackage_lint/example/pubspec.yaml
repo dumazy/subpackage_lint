@@ -4,8 +4,6 @@ publish_to: none
 environment:
   sdk: ">=3.10.0 <4.0.0"
 
-dev_dependencies:
-  test:
-  subpackage_lint:
-    path: ../
-
+# Note: the plugin is NOT a dependency of this package. It is enabled in
+# analysis_options.yaml under `plugins:`; the analysis server fetches and
+# compiles it in its own isolated package.

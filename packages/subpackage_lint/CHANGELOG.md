@@ -2,12 +2,15 @@
 
 - **Breaking:** Migrated from `custom_lint` to the native
   [analyzer plugin system](https://dart.dev/tools/analyzer-plugins). The plugin
-  is now enabled under a top-level `plugins:` key instead of via `custom_lint`.
+  is enabled under a top-level `plugins:` key in `analysis_options.yaml` and is
+  no longer added to `pubspec.yaml`; the analysis server fetches and compiles it
+  in its own isolated package, so it cannot conflict with your project's
+  dependencies.
 - **Breaking:** Requires Dart 3.10 or later.
-- Uses a wide `analyzer` constraint (`>=10.0.0 <15.0.0`) so it can coexist with
-  codegen tools (e.g. `build_runner`, `freezed`) that pin an older analyzer.
-- Rules now run on the command line with `dart analyze` / `flutter analyze`, not
-  only in the IDE.
+- Supports every analyzer from 10.0.0 (Dart 3.10) through 14.x (Dart 3.13) via a
+  wide `analyzer` / `analysis_server_plugin` constraint, so the analysis server
+  can always pick the version matching the running SDK.
+- Rules now run on the command line with `dart analyze`, not only in the IDE.
 - Redesigned and expanded the rule set. Rules are enabled and configured
   individually under `diagnostics:`:
   - `avoid_own_subpackage_import`
@@ -16,10 +19,18 @@
   - `avoid_src_import_from_same_subpackage`
   - `avoid_relative_import_from_other_subpackage`
   - `avoid_src_import_from_other_subpackage`
-- Quick fixes are available for most rules.
-- **Removed:** The `custom_lint`-specific per-rule `directories` and `exclude`
-  options. Use the analyzer's standard `exclude:` and the per-rule
-  `diagnostics:` toggles instead.
+- `avoid_src_import_from_other_subpackage` only reports imports that reach into
+  another subpackage's `src` directory. A `package:` import of a file that sits
+  next to another subpackage's barrel is no longer reported.
+- Quick fixes are available for most rules. Fixes are computed from the
+  resolved import target, and a relative import into another subpackage's `src`
+  is rewritten straight to that subpackage's barrel file.
+- Diagnostics can be suppressed with `// ignore: subpackage_lint/<rule>` and
+  `// ignore_for_file: subpackage_lint/<rule>`.
+- **Changed:** The `custom_lint`-specific per-rule `directories` and `exclude`
+  options are gone. Files can be excluded from all subpackage rules with a
+  top-level `subpackage_lint: exclude:` list of globs in
+  `analysis_options.yaml` (relative `include:` directives are followed).
 
 ## 1.2.0
 

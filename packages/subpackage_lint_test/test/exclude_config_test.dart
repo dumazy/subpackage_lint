@@ -101,7 +101,10 @@ include: ../shared/analysis_options.yaml
     });
 
     test('re-reads after the options file changes', () {
-      writeOptions('analysis_options.yaml', 'subpackage_lint:\n  exclude: []\n');
+      writeOptions(
+        'analysis_options.yaml',
+        'subpackage_lint:\n  exclude: []\n',
+      );
       expect(ExcludeConfig.forPackage(dir.path).isEmpty, isTrue);
 
       // Sleep briefly so the modified timestamp is guaranteed to advance.

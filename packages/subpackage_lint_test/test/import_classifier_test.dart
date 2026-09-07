@@ -19,6 +19,7 @@ void main() {
           isPackageImport: false,
           targetIsBarrel: false,
           uriHasSrcSegment: false,
+          targetIsWithinSrc: false,
           sourceIsWithinSrc: false,
           sourceSubpackage: null,
           targetSubpackage: null,
@@ -33,6 +34,7 @@ void main() {
           isPackageImport: false,
           targetIsBarrel: false,
           uriHasSrcSegment: false,
+          targetIsWithinSrc: false,
           sourceIsWithinSrc: true,
           sourceSubpackage: feature,
           targetSubpackage: null,
@@ -46,7 +48,61 @@ void main() {
         isPackageImport: false,
         targetIsBarrel: false,
         uriHasSrcSegment: false,
+        targetIsWithinSrc: false,
         sourceIsWithinSrc: true,
+        sourceSubpackage: feature,
+        targetSubpackage: other,
+      );
+      expect(
+        result?.violation,
+        SubpackageViolation.relativeImportFromOtherSubpackage,
+      );
+    });
+
+    test(
+      'allows a package: import of a non-src file in another subpackage',
+      () {
+        // A public file that sits next to another subpackage's barrel (outside
+        // `src`) is outside the convention: there is no private boundary to
+        // protect, so it must not be reported as a `src` import.
+        expect(
+          classifyResolvedImport(
+            isPackageImport: true,
+            targetIsBarrel: false,
+            uriHasSrcSegment: false,
+            sourceIsWithinSrc: true,
+            targetIsWithinSrc: false,
+            sourceSubpackage: feature,
+            targetSubpackage: other,
+          ),
+          isNull,
+        );
+      },
+    );
+
+    test('flags a relative import of a non-src file in another subpackage', () {
+      final result = classifyResolvedImport(
+        isPackageImport: false,
+        targetIsBarrel: false,
+        uriHasSrcSegment: false,
+        sourceIsWithinSrc: true,
+        targetIsWithinSrc: false,
+        sourceSubpackage: feature,
+        targetSubpackage: other,
+      );
+      expect(
+        result?.violation,
+        SubpackageViolation.relativeImportFromOtherSubpackage,
+      );
+    });
+
+    test('flags a relative import into another subpackage src file', () {
+      final result = classifyResolvedImport(
+        isPackageImport: false,
+        targetIsBarrel: false,
+        uriHasSrcSegment: true,
+        sourceIsWithinSrc: true,
+        targetIsWithinSrc: true,
         sourceSubpackage: feature,
         targetSubpackage: other,
       );
@@ -61,6 +117,7 @@ void main() {
         isPackageImport: true,
         targetIsBarrel: false,
         uriHasSrcSegment: true,
+        targetIsWithinSrc: true,
         sourceIsWithinSrc: true,
         sourceSubpackage: feature,
         targetSubpackage: other,
@@ -77,6 +134,7 @@ void main() {
           isPackageImport: true,
           targetIsBarrel: true,
           uriHasSrcSegment: false,
+          targetIsWithinSrc: false,
           sourceIsWithinSrc: true,
           sourceSubpackage: feature,
           targetSubpackage: other,
@@ -91,6 +149,7 @@ void main() {
           isPackageImport: false,
           targetIsBarrel: true,
           uriHasSrcSegment: false,
+          targetIsWithinSrc: false,
           sourceIsWithinSrc: true,
           sourceSubpackage: feature,
           targetSubpackage: feature,
@@ -103,6 +162,7 @@ void main() {
           isPackageImport: true,
           targetIsBarrel: false,
           uriHasSrcSegment: true,
+          targetIsWithinSrc: true,
           sourceIsWithinSrc: true,
           sourceSubpackage: feature,
           targetSubpackage: feature,
@@ -118,6 +178,7 @@ void main() {
           isPackageImport: false,
           targetIsBarrel: false,
           uriHasSrcSegment: true,
+          targetIsWithinSrc: true,
           sourceIsWithinSrc: true,
           sourceSubpackage: feature,
           targetSubpackage: feature,
@@ -135,6 +196,7 @@ void main() {
             isPackageImport: false,
             targetIsBarrel: false,
             uriHasSrcSegment: true,
+            targetIsWithinSrc: true,
             sourceIsWithinSrc: false,
             sourceSubpackage: feature,
             targetSubpackage: feature,
@@ -149,6 +211,7 @@ void main() {
             isPackageImport: false,
             targetIsBarrel: false,
             uriHasSrcSegment: false,
+            targetIsWithinSrc: true,
             sourceIsWithinSrc: true,
             sourceSubpackage: feature,
             targetSubpackage: feature,

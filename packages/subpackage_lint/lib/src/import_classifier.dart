@@ -78,8 +78,11 @@ ImportAnalysis? _classifyImport(ImportDirective node, String sourceFilePath) {
     isPackageImport: parsedUri.isScheme('package'),
     targetIsBarrel: isSubpackageBarrel(targetPath),
     uriHasSrcSegment: parsedUri.pathSegments.contains('src'),
-    sourceIsWithinSrc: sourceSubpackage != null &&
+    sourceIsWithinSrc:
+        sourceSubpackage != null &&
         isWithinSrc(sourceSubpackage, sourceFilePath),
+    targetIsWithinSrc:
+        targetSubpackage != null && isWithinSrc(targetSubpackage, targetPath),
     sourceSubpackage: sourceSubpackage,
     targetSubpackage: targetSubpackage,
   );
@@ -93,6 +96,7 @@ ImportAnalysis? _classifyImport(ImportDirective node, String sourceFilePath) {
 /// - [targetIsBarrel]: the target is a subpackage's barrel library file.
 /// - [uriHasSrcSegment]: the written URI contains a `src` path segment.
 /// - [sourceIsWithinSrc]: the source file lives inside its subpackage's `src`.
+/// - [targetIsWithinSrc]: the target file lives inside its subpackage's `src`.
 /// - [sourceSubpackage]/[targetSubpackage]: the subpackages owning each file,
 ///   or `null` when the file belongs to no subpackage.
 ImportAnalysis? classifyResolvedImport({
@@ -100,10 +104,12 @@ ImportAnalysis? classifyResolvedImport({
   required bool targetIsBarrel,
   required bool uriHasSrcSegment,
   required bool sourceIsWithinSrc,
+  required bool targetIsWithinSrc,
   required SubpackageInfo? sourceSubpackage,
   required SubpackageInfo? targetSubpackage,
 }) {
-  final sameSubpackage = sourceSubpackage != null &&
+  final sameSubpackage =
+      sourceSubpackage != null &&
       targetSubpackage != null &&
       sourceSubpackage.path == targetSubpackage.path;
 
@@ -153,8 +159,15 @@ ImportAnalysis? classifyResolvedImport({
       targetSubpackage: targetSubpackage,
     );
   }
-  return (
-    violation: SubpackageViolation.srcImportFromOtherSubpackage,
-    targetSubpackage: targetSubpackage,
-  );
+  // A `package:` import of another subpackage is only a problem when it
+  // reaches into that subpackage's private `src` directory. A file that sits
+  // next to the barrel is outside the convention, so there is nothing to
+  // protect and it is left alone.
+  if (targetIsWithinSrc) {
+    return (
+      violation: SubpackageViolation.srcImportFromOtherSubpackage,
+      targetSubpackage: targetSubpackage,
+    );
+  }
+  return null;
 }

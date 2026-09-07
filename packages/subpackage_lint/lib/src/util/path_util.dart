@@ -24,8 +24,8 @@ SubpackageInfo? getSubpackageInfo(String absolutePath) {
   final libPath = p.joinAll(pathParts.take(libIndex + 1));
 
   var currentDir = p.dirname(absolutePath);
-  while (
-      currentDir.length >= libPath.length && p.isWithin(libPath, currentDir)) {
+  while (currentDir.length >= libPath.length &&
+      p.isWithin(libPath, currentDir)) {
     if (_isSubpackageDir(currentDir)) {
       return (name: p.basename(currentDir), path: currentDir);
     }
@@ -84,11 +84,35 @@ void resetSubpackageDetectionCache() => _isSubpackageDirCache.clear();
 
 /// Whether [dir] qualifies as a subpackage directory: it contains both a `src`
 /// directory and a barrel file named after the directory.
-bool _isSubpackageDir(String dir) =>
-    _isSubpackageDirCache.putIfAbsent(dir, () {
-      final hasSrcFolder = Directory(p.join(dir, 'src')).existsSync();
-      if (!hasSrcFolder) return false;
-      return File(_barrelPathFor(dir)).existsSync();
-    });
+bool _isSubpackageDir(String dir) => _isSubpackageDirCache.putIfAbsent(dir, () {
+  final hasSrcFolder = Directory(p.join(dir, 'src')).existsSync();
+  if (!hasSrcFolder) return false;
+  return File(_barrelPathFor(dir)).existsSync();
+});
 
 String _barrelPathFor(String dir) => p.join(dir, '${p.basename(dir)}.dart');
+
+/// The `package:` URI of the barrel file of the subpackage that owns the file
+/// at [targetPath], or `null` when that file is not inside a subpackage or
+/// [targetLibraryUri] is not a `package:` URI.
+///
+/// [targetLibraryUri] is the resolved URI of the target library (e.g.
+/// `package:my_app/feature/src/deep/code.dart`). The barrel is located on disk
+/// relative to the target and that relative path is resolved against the URI,
+/// so nested `lib/` layouts and nested `src` folders are handled without any
+/// textual `src` juggling:
+///
+/// `package:my_app/feature/src/deep/code.dart` -> `package:my_app/feature/feature.dart`
+Uri? barrelPackageUri({
+  required Uri targetLibraryUri,
+  required String targetPath,
+}) {
+  if (!targetLibraryUri.isScheme('package')) return null;
+  final subpackage = getSubpackageInfo(targetPath);
+  if (subpackage == null) return null;
+  final relative = relativeImportUri(
+    fromFile: targetPath,
+    targetPath: _barrelPathFor(subpackage.path),
+  );
+  return targetLibraryUri.resolve(relative);
+}
