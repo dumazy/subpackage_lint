@@ -1,3 +1,7 @@
+## 2.0.0+1
+
+- Add a proper example to the pub.dev Example tab (`example/example.md`).
+
 ## 2.0.0
 
 - **Breaking:** Migrated from `custom_lint` to the native
