@@ -2,10 +2,8 @@ name: example
 publish_to: none
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
+  sdk: ">=3.10.0 <4.0.0"
 
-dev_dependencies:
-  test:
-  custom_lint: ^0.5.0
-  subpackage_lint:
-    path: ..
+# Note: the plugin is NOT a dependency of this package. It is enabled in
+# analysis_options.yaml under `plugins:`; the analysis server fetches and
+# compiles it in its own isolated package.

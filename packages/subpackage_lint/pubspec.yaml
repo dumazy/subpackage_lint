@@ -1,17 +1,32 @@
 name: subpackage_lint
 description: A set of linting rules for clean code structure with subpackages.
-version: 1.1.0+2
+version: 2.0.0
 repository: https://github.com/dumazy/subpackage_lint
+issue_tracker: https://github.com/dumazy/subpackage_lint/issues
+topics:
+  - lints
+  - analyzer-plugin
+  - architecture
 
 environment:
-  sdk: ">=2.12.0 <4.0.0"
+  sdk: ">=3.10.0 <4.0.0"
 
 dependencies:
-  analyzer: ^6.8.0
-  custom_lint_builder: ^0.6.7
-  glob: ^2.1.2
-  yaml: ^3.1.2
+  # Deliberately wide ranges. The analysis server resolves the plugin in its
+  # own isolated package (together with the analysis_server_plugin version that
+  # matches the running SDK), so this range decides which Dart SDKs the plugin
+  # supports rather than what a consuming project has to depend on. Each
+  # analysis_server_plugin release pins one exact analyzer version:
+  #   0.3.5 -> analyzer 10.0.0 (Dart 3.10) ... 0.3.22 -> analyzer 14.3.0 (Dart 3.13)
+  # The source is verified to compile against every pair in this range.
+  analysis_server_plugin: ">=0.3.5 <0.4.0"
+  analyzer: ">=10.0.0 <15.0.0"
+  analyzer_plugin: ">=0.14.0 <0.15.0"
+  glob: ^2.1.0
+  path: ^1.9.0
+  yaml: ^3.1.0
 
 dev_dependencies:
-  lints: ^4.0.0
-  test: ^1.24.0
+  lints: ^6.0.0
+  test: ^1.25.0
+

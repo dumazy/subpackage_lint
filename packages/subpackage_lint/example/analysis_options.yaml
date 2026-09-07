@@ -1,18 +1,12 @@
-analyzer:
-  plugins:
-    - custom_lint
-
-custom_lint:
-  rules:
-    - avoid_src_import_from_other_subpackage:
-      exclude:
-        - "lib/excluded/**"
-        - "**_test.dart"
-    - avoid_src_import_from_same_package:
-      exclude:
-        - "lib/excluded/**"
-        - "**_test.dart"
-    - avoid_package_import_for_same_package:
-      exclude:
-        - "lib/excluded/**"
-        - "**_test.dart"
+plugins:
+  subpackage_lint:
+    # This example runs the plugin from source. Real projects use
+    #   version: ^2.0.0
+    path: ../
+    diagnostics:
+      avoid_own_subpackage_import: true
+      avoid_relative_subpackage_import: true
+      prefer_relative_import_from_same_subpackage: true
+      avoid_src_import_from_same_subpackage: true
+      avoid_relative_import_from_other_subpackage: true
+      avoid_src_import_from_other_subpackage: true
